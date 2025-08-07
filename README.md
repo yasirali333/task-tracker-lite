@@ -1,25 +1,60 @@
-# task-tracker-lite
- Getting Started
-Backend:
-bash
+# Task Tracker Lite
+
+A simple full-stack MERN application where users can **sign up**, **log in**, and **manage personal tasks** with authentication and due-date logic.
+
+---
+
+##  Project Structure
+
+task-tracker-lite/
+├── backend/
+├── frontend/
+└── README.md
+
+yaml
 Copy
 Edit
+
+---
+
+## ⚙️ Tech Stack
+
+### 🔧 Backend:
+- Node.js
+- Express.js
+- MongoDB (Mongoose)
+- JWT Authentication
+- bcrypt (Password hashing)
+- dotenv
+
+### 🌐 Frontend:
+- Next.js (TypeScript)
+- Tailwind CSS
+- Axios
+
+---
+
+## 📦 Setup Instructions
+
+### 1️⃣ Backend Setup
+
+```bash
 cd backend
 npm install
 npm run dev
-.env example:
+✅ Required .env file:
+Create a .env file in /backend directory:
 
-ini
+env
 Copy
 Edit
 PORT=5000
 JWT_SECRET=your_jwt_secret
-MONGO_URI=mongodb://localhost:27017/task-tracker
-
-Frontend:
+MONGO_URI=mongodb://localhost:27017/yasirdb
+2️⃣ Frontend Setup
 bash
 Copy
 Edit
 cd frontend
 npm install
-npm start
+npm run dev
