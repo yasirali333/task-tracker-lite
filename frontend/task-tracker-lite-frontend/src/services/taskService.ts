@@ -19,3 +19,8 @@ export const updateTask = async (id: string, task: Partial<Task>): Promise<Task>
 export const deleteTask = async (id: string): Promise<void> => {
   await api.delete(`/tasks/${id}`);
 };
+
+export const getTaskById = async (id: string): Promise<Task> => {
+  const res = await api.get<Task>(`/tasks/${id}`);
+  return res.data;
+};

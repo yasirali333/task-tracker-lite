@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { getTasks, updateTask } from "@/services/taskService";
+ import { getTaskById, updateTask } from "@/services/taskService"; // update import
 import { Task } from "@/types/Task";
 
 export default function EditTaskPage() {
@@ -15,16 +15,15 @@ export default function EditTaskPage() {
     dueDate: "",
   });
 
-  useEffect(() => {
-    const loadTask = async () => {
-      const all = await getTasks();
-      const found = all.find((t) => t._id === id);
-          console.log("Editing task:", found); // ✅ Check if dueDate exists
 
-      if (found) setTask(found);
-    };
-    loadTask();
-  }, [id]);
+useEffect(() => {
+  const loadTask = async () => {
+    const found = await getTaskById(id as string);
+    if (found) setTask(found);
+  };
+  loadTask();
+}, [id]);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
