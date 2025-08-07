@@ -12,6 +12,7 @@ exports.createTask = async (req, res) => {
         return res.status(400).json({ message: "Task cannot be marked as completed before its due date." });
       }
     }
+    body.user = req.user._id;
     const newTask = await Task.create(body);
     res.status(201).json(newTask);
   } catch (error) {
@@ -22,7 +23,7 @@ exports.createTask = async (req, res) => {
 // Get All Tasks
 exports.getAllTasks = async (req, res) => {
   try {
-    const tasks = await Task.find();
+    const tasks = await Task.find({ user: req.user._id });
     res.json(tasks);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -32,7 +33,7 @@ exports.getAllTasks = async (req, res) => {
 // Get Single Task
 exports.getTaskById = async (req, res) => {
   try {
-    const task = await Task.findById(req.params.id);
+    const task = await Task.findOne({ _id: req.params.id, user: req.user._id });
     if (!task) return res.status(404).json({ message: "Task not found" });
     res.json(task);
   } catch (error) {
@@ -52,9 +53,11 @@ exports.updateTask = async (req, res) => {
         return res.status(400).json({ message: "Task cannot be marked as completed before its due date." });
       }
     }
-    const task = await Task.findByIdAndUpdate(req.params.id, body, {
-      new: true,
-    });
+    const task = await Task.findOneAndUpdate(
+      { _id: req.params.id, user: req.user._id },
+      body,
+      { new: true }
+    );
     if (!task) return res.status(404).json({ message: "Task not found" });
     res.json(task);
   } catch (error) {
@@ -65,7 +68,7 @@ exports.updateTask = async (req, res) => {
 // Delete Task
 exports.deleteTask = async (req, res) => {
   try {
-    const task = await Task.findByIdAndDelete(req.params.id);
+    const task = await Task.findOneAndDelete({ _id: req.params.id, user: req.user._id });
     if (!task) return res.status(404).json({ message: "Task not found" });
     res.json({ message: "Task deleted" });
   } catch (error) {

@@ -16,18 +16,26 @@ export default function RegisterPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError("");
 
-    try {
-      const res = await registerUser(formData) as { token: string };
-      localStorage.setItem("token", res.token); // Save token
-      router.push("/login"); // or dashboard
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Registration failed");
+  try {
+    // Accepts { token, user } from backend
+    const res = await registerUser(formData) as { token: string; user?: { name: string } };
+    
+    localStorage.setItem("token", res.token);
+    if (res.user) {
+      localStorage.setItem("user", JSON.stringify(res.user));
     }
-  };
+
+    // ✅ Redirect to tasks after registering
+    router.push("/login");
+    
+  } catch (err: any) {
+    setError(err.response?.data?.message || "Registration failed");
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-green-100 px-4">

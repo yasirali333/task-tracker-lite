@@ -14,8 +14,12 @@ export default function LoginPage() {
   const router = useRouter();
   const handleLogin = async () => {
     try {
-      const res = await axios.post<{ token: string; message?: string }>("/auth/login", form);
+      // Accepts { token, user } from backend
+      const res = await axios.post<{ token: string; user?: { name: string } }>("/auth/login", form);
       localStorage.setItem("token", res.data.token);
+      if (res.data.user) {
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+      }
       router.push("/tasks");
     } catch (err: any) {
       alert(err.response?.data?.message || "Login failed");
