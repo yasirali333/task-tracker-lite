@@ -13,13 +13,29 @@ export default function AddTaskPage() {
     completed: false,
     dueDate: "",
   });
+  const [error, setError] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     if (name === "completed") {
+      // Check if trying to mark as completed before due date
+      if (value === "true" && task.dueDate) {
+        const today = new Date();
+        const dueDate = new Date(task.dueDate);
+        today.setHours(0,0,0,0);
+        dueDate.setHours(0,0,0,0);
+        if (dueDate > today) {
+          setError("You can't mark as completed before your due date.");
+          setTask({ ...task, completed: false });
+          return;
+        } else {
+          setError("");
+        }
+      }
       setTask({ ...task, completed: value === "true" });
     } else if (name === "dueDate") {
       setTask({ ...task, dueDate: value });
+      setError("");
     } else {
       setTask({ ...task, [name]: value });
     }
@@ -32,45 +48,54 @@ export default function AddTaskPage() {
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-10">
-      <h1 className="text-2xl font-bold mb-4">➕ Add Task</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          name="title"
-          placeholder="Title"
-          value={task.title}
-          onChange={handleChange}
-          required
-          className="w-full border px-4 py-2 rounded"
-        />
-        <textarea
-          name="description"
-          placeholder="Description"
-          value={task.description}
-          onChange={handleChange}
-          required
-          className="w-full border px-4 py-2 rounded"
-        />
-        <input
-          type="date"
-          name="dueDate"
-          value={task.dueDate}
-          onChange={handleChange}
-          className="w-full border px-4 py-2 rounded"
-        />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 to-blue-100 px-4">
+      <div className="w-full max-w-xl bg-white rounded-xl shadow-lg p-8">
+        <h1 className="text-3xl font-extrabold text-center text-gray-800 mb-8">Add Task</h1>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <input
+            name="title"
+            placeholder="Title"
+            value={task.title}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 transition"
+          />
+          <textarea
+            name="description"
+            placeholder="Description"
+            value={task.description}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 transition"
+            rows={4}
+          />
+          <input
+            type="date"
+            name="dueDate"
+            value={task.dueDate}
+            onChange={handleChange}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 transition"
+          />
         <select
           name="completed"
           value={task.completed ? "true" : "false"}
           onChange={handleChange}
-          className="w-full border px-4 py-2 rounded"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 transition"
         >
           <option value="false">Pending</option>
           <option value="true">Completed</option>
         </select>
-        <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
-          Save Task
-        </button>
-      </form>
+        {error && (
+          <p className="text-red-500 text-sm mt-1">{error}</p>
+        )}
+          <button
+            type="submit"
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg shadow transition duration-150"
+          >
+            Save Task
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

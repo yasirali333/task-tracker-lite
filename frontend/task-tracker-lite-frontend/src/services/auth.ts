@@ -6,7 +6,7 @@ export const registerUser = async (data: {
   email: string;
   password: string;
 }) => {
-  const res = await api.post("/api/auth/register", data);
+  const res = await api.post("/auth/register", data);
   return res.data; // expects { token, user }
 };
 
@@ -14,6 +14,6 @@ export const loginUser = async (data: {
   email: string;
   password: string;
 }) => {
-  const res = await api.post("/api/auth/login", data);
+  const res = await api.post("/auth/login", data);
   return res.data; // expects { token, user }
 };
