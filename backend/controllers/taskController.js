@@ -3,7 +3,16 @@ const Task = require("../models/Task");
 // Create Task
 exports.createTask = async (req, res) => {
   try {
-    const newTask = await Task.create(req.body);
+    let body = { ...req.body };
+    console.log('Incoming createTask body:', body);
+    if (body.completed !== undefined) {
+      body.completed = body.completed === true || body.completed === "true";
+      console.log('Parsed completed value:', body.completed);
+      if (body.completed && body.dueDate && new Date(body.dueDate) > new Date()) {
+        return res.status(400).json({ message: "Task cannot be marked as completed before its due date." });
+      }
+    }
+    const newTask = await Task.create(body);
     res.status(201).json(newTask);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -34,7 +43,16 @@ exports.getTaskById = async (req, res) => {
 // Update Task
 exports.updateTask = async (req, res) => {
   try {
-    const task = await Task.findByIdAndUpdate(req.params.id, req.body, {
+    let body = { ...req.body };
+    console.log('Incoming updateTask body:', body);
+    if (body.completed !== undefined) {
+      body.completed = body.completed === true || body.completed === "true";
+      console.log('Parsed completed value:', body.completed);
+      if (body.completed && body.dueDate && new Date(body.dueDate) > new Date()) {
+        return res.status(400).json({ message: "Task cannot be marked as completed before its due date." });
+      }
+    }
+    const task = await Task.findByIdAndUpdate(req.params.id, body, {
       new: true,
     });
     if (!task) return res.status(404).json({ message: "Task not found" });

@@ -1,27 +1,29 @@
 const express = require("express");
 const dotenv = require("dotenv");
-const connectDB = require("./config/db");
-const taskRoutes = require('./routes/task');
+const cors = require("cors");
+const mongoose = require("mongoose");
+const authRoutes = require("./routes/auth");
+const taskRoutes = require("./routes/task");
 
 dotenv.config();
-
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-// Middleware
+app.use(cors());
 app.use(express.json());
 
+// MongoDB connection
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB connected"))
+  .catch(err => console.error("Connection error:", err));
+
 // Routes
-app.use("/api/tasks", taskRoutes); // ← Use route
+app.use("/api/auth", authRoutes);
+app.use("/api/tasks", taskRoutes);
 
-// Root Route
+// Default route
 app.get("/", (req, res) => {
-  res.send("🚀 Task Tracker Lite API is live!");
+  res.send("API is running...");
 });
 
-// Connect DB and start server
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`🚀 Server is running on http://localhost:${PORT}`);
-  });
-});
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
